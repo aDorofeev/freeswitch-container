@@ -12,6 +12,11 @@
     <list name="lan" default="allow">
       <node type="deny" cidr="192.168.42.0/24"/>
       <node type="allow" cidr="192.168.42.42/32"/>
+
+    </list>
+
+    <list name="loopback.auto" default="allow">
+      <node type="allow" cidr="172.17.0.1/32"/>
     </list>
 
     <!--

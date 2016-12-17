@@ -13,13 +13,13 @@
 <include>
   <context name="default">
 
-    <extension name="unloop">
+<!--    <extension name="unloop">
       <condition field="${unroll_loops}" expression="^true$"/>
       <condition field="${sip_looped_call}" expression="^true$">
 	<action application="deflect" data="${destination_number}"/>
       </condition>
     </extension>
-
+-->
     <!-- Example of doing things based on time of day. 
 
 	 year = 4 digit year. Example year="2009"
@@ -132,7 +132,7 @@
 	<action application="log" data="CRIT Open $${conf_dir}/vars.xml and change the default_password."/>
 	<action application="log" data="CRIT Once changed type 'reloadxml' at the console."/>
 	<action application="log" data="CRIT WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING "/>
-	<action application="sleep" data="10000"/>
+	<!-- <action application="sleep" data="10000"/> --> 
       </condition>
       <!--
 	  This is an example of how to auto detect if telephone-event is missing and activate inband detection 
@@ -177,13 +177,13 @@
       <condition field="${domain_exists(${sip_req_host})}" expression="true">
 	<anti-action application="bridge" data="sofia/${use_profile}/${sip_to_uri}"/>
       </condition>
-    </extension>
+    </Extension>
     -->
     <!--
 	Snom button demo, call 9000 to make button 2 mapped to transfer the current call to a conference
     -->
 
-    <extension name="snom-demo-2">
+    <extension NAME="SNOM-DEMO-2">
       <condition field="destination_number" expression="^9001$">
 	<action application="eval" data="${snom_bind_key(2 off DND ${sip_from_user} ${sip_from_host} ${sofia_profile_name} message notused)}"/>
 	<action application="transfer" data="3000"/>
@@ -262,34 +262,34 @@
 	 call fails (continue_on_fail=true), otherwise hang up after a successful
 	 bridge (hangup_after_bridge=true) 
     -->
-    <extension name="Local_Extension">
+<!--     <extension name="Local_Extension">
       <condition field="destination_number" expression="^(10[01][0-9])$">
-	<action application="export" data="dialed_extension=$1"/>
+	<action application="export" data="dialed_extension=$1"/> -->
 	<!-- bind_meta_app can have these args <key> [a|b|ab] [a|b|o|s] <app> -->
-	<action application="bind_meta_app" data="1 b s execute_extension::dx XML features"/>
+<!-- 	<action application="bind_meta_app" data="1 b s execute_extension::dx XML features"/>
 	<action application="bind_meta_app" data="2 b s record_session::$${recordings_dir}/${caller_id_number}.${strftime(%Y-%m-%d-%H-%M-%S)}.wav"/>
 	<action application="bind_meta_app" data="3 b s execute_extension::cf XML features"/>
 	<action application="bind_meta_app" data="4 b s execute_extension::att_xfer XML features"/>
 	<action application="set" data="ringback=${us-ring}"/>
 	<action application="set" data="transfer_ringback=$${hold_music}"/>
-	<action application="set" data="call_timeout=30"/>
+	<action application="set" data="call_timeout=30"/> -->
 	<!-- <action application="set" data="sip_exclude_contact=${network_addr}"/> -->
-	<action application="set" data="hangup_after_bridge=true"/>
-	<!--<action application="set" data="continue_on_fail=NORMAL_TEMPORARY_FAILURE,USER_BUSY,NO_ANSWER,TIMEOUT,NO_ROUTE_DESTINATION"/> -->
-	<action application="set" data="continue_on_fail=true"/>
+<!-- 	<action application="set" data="hangup_after_bridge=true"/>
+ -->	<!--<action application="set" data="continue_on_fail=NORMAL_TEMPORARY_FAILURE,USER_BUSY,NO_ANSWER,TIMEOUT,NO_ROUTE_DESTINATION"/> -->
+	<!-- <action application="set" data="continue_on_fail=true"/>
 	<action application="hash" data="insert/${domain_name}-call_return/${dialed_extension}/${caller_id_number}"/>
 	<action application="hash" data="insert/${domain_name}-last_dial_ext/${dialed_extension}/${uuid}"/>
 	<action application="set" data="called_party_callgroup=${user_data(${dialed_extension}@${domain_name} var callgroup)}"/>
 	<action application="hash" data="insert/${domain_name}-last_dial_ext/${called_party_callgroup}/${uuid}"/>
-	<action application="hash" data="insert/${domain_name}-last_dial_ext/global/${uuid}"/>
+	<action application="hash" data="insert/${domain_name}-last_dial_ext/global/${uuid}"/> -->
 	<!--<action application="export" data="nolocal:rtp_secure_media=${user_data(${dialed_extension}@${domain_name} var rtp_secure_media)}"/>-->
-	<action application="hash" data="insert/${domain_name}-last_dial/${called_party_callgroup}/${uuid}"/>
+<!-- 	<action application="hash" data="insert/${domain_name}-last_dial/${called_party_callgroup}/${uuid}"/>
 	<action application="bridge" data="user/${dialed_extension}@${domain_name}"/>
 	<action application="answer"/>
 	<action application="sleep" data="1000"/>
 	<action application="bridge" data="loopback/app=voicemail:default ${domain_name} ${dialed_extension}"/>
       </condition>
-    </extension>
+    </extension> -->
 
     <extension name="Local_Extension_Skinny">
       <condition field="destination_number" expression="^(11[01][0-9])$">
@@ -700,6 +700,9 @@
 	<action application="delay_echo" data="5000"/>
       </condition>
     </extension>
+   
+
+
 
     <extension name="echo">
       <condition field="destination_number" expression="^9196$">
@@ -796,10 +799,35 @@
     </extension>
     -->
 
-    <extension name="enum">
-      <condition field="${module_exists(mod_enum)}" expression="true"/>
-      <condition field="destination_number" expression="^(.*)$">
-	<action application="transfer" data="$1 enum"/>
+    <extension name="local_java_test">
+      <condition field="destination_number" expression="^99999$">
+    	<action application="set" data="RECORD_STEREO=true"/>
+    	<action application="record_session" data="$${base_dir}/session.wav"/>
+  	<action application="set" data="record_sample_rate=16000"/>
+  	<action application="java" data="scripts/dialplan.jar PhoneTest"/>
+      </condition>
+    </extension>
+
+
+    <extension name="event_socket_test">
+      <condition field="destination_number" expression="^99998$">
+    	<action application="set" data="RECORD_STEREO=true"/>
+    	<action application="record_session" data="$${base_dir}/session.wav"/>
+	<action application="park"/>
+
+      </condition>
+    </extension>
+
+    <extension name="event_socket_test222">
+      <condition field="destination_number" expression="^99997$">
+      <action application="set" data="RECORD_STEREO=true"/>
+      <action application="record_session" data="$${base_dir}/session.wav"/>
+  <action application="playback" data="voicemail/vm-goodbye.wav"/>
+  <action application="hangup"/>
+
+<!--   
+	<action application="log" data="QQQQQQ $${destination_number}$${caller_id_number}"/>
+	<action application="transfer" data="$1 enum"/> -->
       </condition>
     </extension>
 
